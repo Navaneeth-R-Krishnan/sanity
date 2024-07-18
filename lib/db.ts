@@ -1,15 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import mongoose from 'mongoose';
 
-const prismaClientSingleton = () => {
-  return new PrismaClient();
-};
+  const connectDB = async (): Promise<void> => {
+    try {
+      await mongoose.connect(process.env.MONGODB_URL)
+      console.log('MongoDB connected successfully')
+    } catch (error) {
+      console.error('Failed to connect to MongoDB:', error)
+      process.exit(1)
+    }
+  };
 
-declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
-} & typeof global;
-
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
-
-export default prisma;
-
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+export default connectDB;
